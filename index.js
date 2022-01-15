@@ -1,5 +1,5 @@
 const addon = require('bindings')('addon');
-const js = require('./js');
+const js = require('./javascript');
 
 const fs = require('fs');
 const writeStream = fs.createWriteStream('/dev/null');

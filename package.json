@@ -9,6 +9,12 @@
     "addon:clean": "node-gyp clean",
     "addon:rebuild": "npm run addon:clean && npm run addon:configure && npm run addon:build",
     "addon:list": "node-gyp list",
+    "c:compile": "cd c && gcc main.c -o main",
+    "c:compile:optimized": "cd c && gcc main.c -o main_optimized -O3",
+    "c:run": "./c/main",
+    "c:run:optimized": "./c/main_optimized",
+    "c": "npm run c:compile && npm run c:run",
+    "c:optimized": "npm run c:compile:optimized && npm run c:run:optimized",
     "start": "node index.js",
     "serve": "npm run addon:rebuild && npm start"
   },
