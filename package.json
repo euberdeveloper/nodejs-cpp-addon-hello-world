@@ -7,11 +7,10 @@
     "addon:configure": "node-gyp configure",
     "addon:build": "node-gyp build",
     "addon:clean": "node-gyp clean",
-    "addon:install": "node-gyp install",
+    "addon:rebuild": "npm run addon:clean && npm run addon:configure && npm run addon:build",
     "addon:list": "node-gyp list",
-    "addon:remove": "node-gyp remove",
     "start": "node index.js",
-    "serve": "npm run addon:install && npm start"
+    "serve": "npm run addon:rebuild && npm start"
   },
   "repository": {
     "type": "git",

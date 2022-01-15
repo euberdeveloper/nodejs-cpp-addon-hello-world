@@ -1,6 +1,10 @@
 const bindings = require('bindings');
 const addon = bindings('addon');
 
+function fibonacci(n) {
+    return (n <= 1) ? n : fibonacci(n - 1) + fibonacci(n - 2);
+}
+
 class Test {
     #start = null;
     #end = null;
@@ -25,23 +29,23 @@ class Test {
 }
 const test = new Test();
 
-console.log = () => {}
+console.log = () => { }
 
 test.start();
-for (let i = 0; i < 1e8; i++) {
-    console.log(addon.hello());
+for (let i = 0; i < 3; i++) {
+    addon.fibonacci42();
 }
 test.end();
 const elapsed1 = test.elapsed;
 console.debug('addon', elapsed1);
 
 test.start();
-for (let i = 0; i < 1e8; i++) {
-    console.log('world');
+for (let i = 0; i < 3; i++) {
+    fibonacci(42);
 }
 test.end();
 const elapsed2 = test.elapsed;
 console.debug('js', elapsed2);
 
 
-console.debug('speedup', elapsed1 / elapsed2);
+console.debug('speedup', elapsed2 / elapsed1);
