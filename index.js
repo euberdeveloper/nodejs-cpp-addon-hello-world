@@ -1,51 +1,39 @@
-const bindings = require('bindings');
-const addon = bindings('addon');
+const addon = require('bindings')('addon');
+const js = require('./js');
 
-function fibonacci(n) {
-    return (n <= 1) ? n : fibonacci(n - 1) + fibonacci(n - 2);
-}
+const fs = require('fs');
+const writeStream = fs.createWriteStream('/dev/null');
 
-class Test {
-    #start = null;
-    #end = null;
-
-    start() {
-        this.#end = null;
-        this.#start = Date.now();
+function run(fun, iterations) {
+    const start = Date.now();
+    for (let i = 0; i < iterations; i++) {
+        fun();
     }
-
-    end() {
-        if (this.#start) {
-            this.#end = Date.now();
-        }
-        else {
-            throw new Error('impossibile finire una cosa non iniziata');
-        }
-    }
-
-    get elapsed() {
-        return this.start && this.end ? this.#end - this.#start : null;
-    }
+    return Date.now() - start;
 }
-const test = new Test();
 
-console.log = () => { }
+function benchmark(name, jsFun, addonFun, iterations) {
+    console.log(`TEST: ${name} (${iterations} iterations)`);
 
-test.start();
-for (let i = 0; i < 3; i++) {
-    addon.fibonacci42();
+    console.debug('Run javascript');
+    const jsTime = run(jsFun, iterations);
+    console.debug(`Time: ${jsTime}ms`);
+
+    console.log('Run addon');
+    const addonTime = run(addonFun, iterations);
+    console.log(`Time: ${addonTime}ms`);
+
+    const won = jsTime >= addonTime ? 'javascript' : 'addon';
+    const fraction = jsTime >= addonTime ? jsTime / addonTime : addonTime / jsTime;
+    console.log(`${won} is ${fraction} times slower`);
+
+    console.log('\n\n');
 }
-test.end();
-const elapsed1 = test.elapsed;
-console.debug('addon', elapsed1);
 
-test.start();
-for (let i = 0; i < 3; i++) {
-    fibonacci(42);
-}
-test.end();
-const elapsed2 = test.elapsed;
-console.debug('js', elapsed2);
+benchmark('HELLO', js.hello, addon.hello, 1e6);
 
+benchmark('HELLO', js.hello, addon.hello, 1e6);
+benchmark('HELLO_2', () => writeStream.write(js.hello()), () => writeStream.write(addon.hello()), 1e6);
 
-console.debug('speedup', elapsed2 / elapsed1);
+benchmark('FIBONACCI_35', () => js.fibonacci(35), () => addon.fibonacci35(), 5);
+benchmark('FIBONACCI_40', () => js.fibonacci(40), () => addon.fibonacci40(), 5);

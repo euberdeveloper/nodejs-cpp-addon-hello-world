@@ -1,4 +1,4 @@
-#include "../headers/fibonacci.h"
+#include "../headers/utils/fibonacci.h"
 
 int fibonacci(int n)
 {
