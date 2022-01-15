@@ -1,0 +1,39 @@
+{
+  "name": "nodejs-cpp-addon-hello-world",
+  "version": "1.0.0",
+  "description": "A first trial with nodejs c++ addons",
+  "main": "index.js",
+  "scripts": {
+    "addon:configure": "node-gyp configure",
+    "addon:build": "node-gyp build",
+    "addon:clean": "node-gyp clean",
+    "addon:install": "node-gyp install",
+    "addon:list": "node-gyp list",
+    "addon:remove": "node-gyp remove",
+    "start": "node index.js",
+    "serve": "npm run addon:install && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/euberdeveloper/nodejs-cpp-addon-hello-world.git"
+  },
+  "keywords": [
+    "nodejs",
+    "native",
+    "c++",
+    "c",
+    "addon"
+  ],
+  "author": "Eugenio Berretta <euberdeveloper@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/euberdeveloper/nodejs-cpp-addon-hello-world/issues"
+  },
+  "homepage": "https://github.com/euberdeveloper/nodejs-cpp-addon-hello-world#readme",
+  "devDependencies": {
+    "node-gyp": "^8.4.1"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0"
+  }
+}
