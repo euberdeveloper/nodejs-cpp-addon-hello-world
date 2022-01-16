@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-cpp-addon-hello-world",
+  "name": "nodejs-cpp-addons-first-approach",
   "version": "1.0.0",
   "description": "A first trial with nodejs c++ addons",
   "main": "index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/euberdeveloper/nodejs-cpp-addon-hello-world.git"
+    "url": "git+https://github.com/euberdeveloper/nodejs-cpp-addons-first-approach.git"
   },
   "keywords": [
     "nodejs",
@@ -32,9 +32,9 @@
   "author": "Eugenio Berretta <euberdeveloper@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/euberdeveloper/nodejs-cpp-addon-hello-world/issues"
+    "url": "https://github.com/euberdeveloper/nodejs-cpp-addons-first-approach/issues"
   },
-  "homepage": "https://github.com/euberdeveloper/nodejs-cpp-addon-hello-world#readme",
+  "homepage": "https://github.com/euberdeveloper/nodejs-cpp-addons-first-approach#readme",
   "devDependencies": {
     "node-gyp": "^8.4.1"
   },
