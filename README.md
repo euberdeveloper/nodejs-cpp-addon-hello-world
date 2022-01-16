@@ -212,7 +212,7 @@ As we can see, **the function behind is the same**, it is the sum, but the fact 
 
 This explains well that **C++ addons should be used just for computational heavy tasks**, while they are **even slower if the task is simple**, due to a **small overhead, which is negligible if the algorithm is complex**. This means that **one can not just think of writing simple code in C++ and calling it by complex javascript code to make programs faster**, but **the C++ code has to execute a quite complex task in itself in order to have a benefit**. 
 
-One of these cases is **cryptography**, something that **requires big computations** but that is much used, for instance, in **Rest APIs**, to **check hashed passwords or json web tokens**. One of the **few npm packages written in C++** is indeed **[bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme)**.
+One of these cases is **cryptography**, something that **requires big computations** but that is much used, for instance, in **Rest APIs**, to **check hashed passwords or json web tokens**. One of the **few npm packages written in C++** is indeed **[bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme)**. It is also curious to see how, during the years, they passed **from v8** [see here](https://github.com/kelektiv/node.bcrypt.js/blob/0d0e09087b41032795b4ccf7babfbb69f2a06555/src/bcrypt_node.cc) **to nan** [see here](https://github.com/kelektiv/node.bcrypt.js/blob/1012f9a0dc7b517e1511461c384281dc0f3f3059/src/bcrypt_node.cc) to **Node-API** [see here](https://github.com/kelektiv/node.bcrypt.js/blob/184200eb54692b476c8fe31cdb5a6d7789c38ca1/src/bcrypt_node.cc).
 
 ### But is the C++ addon's code as faster as normal C code?
 
