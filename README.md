@@ -107,9 +107,9 @@ void Hello(const FunctionCallbackInfo<Value> &args)
 ```
 This is the ugly code that you will write if you choose the bad way.
 
-### hello test
+### hello bechmark
 
-The hello test is the same of the official documentation: **it is just a function that returns the string `world`**.
+The hello bechmark is the same of the official documentation: **it is just a function that returns the string `world`**.
 
 ```js
  hello() {
@@ -119,8 +119,8 @@ The hello test is the same of the official documentation: **it is just a functio
 
 In the **benchmarks** I compared both the addon and the js implementations first **by just calling the function 10^6 times** and then by **writing the result in a file (/dev/null) 10^6 times**. 
 
-| **TEST**        | **ITERATIONS** | **JS TIME** | **ADDON TIME** | **WINNER**                          |
-|-----------------|----------------|-------------|----------------|-------------------------------------|
+| **BENCHMARK**   | **ITERATIONS** | **JS TIME** | **ADDON TIME** | **WINNER**                          |
+| --------------- | -------------- | ----------- | -------------- | ----------------------------------- |
 | HELLO           | 10^6           | 7ms         | 67ms           | *Javascript* is *9.57* times faster |
 | HELLO OVER FILE | 10^6           | 509ms       | 428ms          | *Javascript* is *1.18* times faster |
 
@@ -145,9 +145,119 @@ function hello() {
 
 We can see that the **second version** is **1.33 times slower** and this is because of the **function calls overhead**, a similar readon of why, in this case, the addon is slower.
 
-**But why in writing in the file the gap was smaller?**. Here the reason is obvious. The **most computational expensive part** in the second test **is the file writing**, not the string creation. If you look at the **times**, for the same number of iterations the **second test** was definitely slower. It is as if we took the first test times and added 500 millis. For numbers bigger than 1, `x > y; x / y` is bigger than `(x + 500) / (y + 500)`. This can be interpreted as: **the addon is slower to the same extent of the first test**, but this overhead is **almost negligible**, because **the bottleneck here is the file writing**.
+**But why in writing in the file the gap was smaller?**. Here the reason is obvious. The **most computational expensive part** in the second benchmark **is the file writing**, not the string creation. If you look at the **times**, for the same number of iterations the **second benchmark** was definitely slower. It is as if we took the first benchmark times and added 500 millis. For numbers bigger than 1, `x > y; x / y` is bigger than `(x + 500) / (y + 500)`. This can be interpreted as: **the addon is slower to the same extent of the first benchmark**, but this overhead is **almost negligible**, because **the bottleneck here is the file writing**.
 
-### fibonacci test
+### fibonacci benchmark
 
+This benchmark covers a **very stupid implementation** of the **fibonacci** algorithm. 
 
+```cpp
+int fibonacci(int n)
+{
+    return n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+}
+```
 
+This recursive function is **exponential**, while it could be just linear by using **Dynamic programming** and **Memoization**. With even quite small arguments, it involves **heavy computations**.
+
+I tested the computation of `fibonacci(35)` and `fibonacci(40)` with `5` iterations:
+
+| **BENCHMARK** | **ITERATIONS** | **JS TIME** | **ADDON TIME** | **WINNER**                     |
+| ------------- | -------------- | ----------- | -------------- | ------------------------------ |
+| fibonacci(35) | 5              | 500ms       | 116ms          | *Addon* is *4.31* times faster |
+| fibonacci(40) | 5              | 12279ms     | 1284ms         | *Addon* is *9.56* times faster |
+
+This time we can see, how it was expected, that **the addon is way faster than javascript**. Here we can see the power of compiled (and optimized) languages such as C++. The **addon** is **4 times faster for fibonacci(35)** and **almost 10 times faster for fibonacci(40)**. Again, this gab between the two tests is just **an illusion**: being the algorithm **exponential**, **by increasing** even slightly **the input**, the **number of computations increase in an exponential way**. Being C++ faster, the gap increases exponentially by increasing the input.
+
+Here we can see how with **heavy computation functions**, **native addons make sense**.
+
+### sum benchmark
+
+In this benchmark I made something that **consolidates** what learnt from the two other tests. I wrote two functions.
+
+The first function is just **the sum of 1 + 1**:
+
+```cpp
+int sum()
+{
+    int result =  1 + 1;
+    return result;
+}
+```
+
+While in the other there is **the sum of he first n natural numbers**.
+
+```cpp
+int multisum(int n) {
+    int result = 0;
+    for (int i = 0; i < n; i++) {
+        result += i;
+    }
+    return result;
+}
+```
+
+While the first one executes **a single sum for 10^7 times**, while the second one executes **10^7 sums for one time**.
+
+The results are:
+
+| **BENCHMARK** | **ITERATIONS** | **JS TIME** | **ADDON TIME** | **WINNER**                          |
+| ------------- | -------------- | ----------- | -------------- | ----------------------------------- |
+| sum           | 10^7           | 63ms        | 293ms          | *Javascript* is *4.65* times faster |
+| multisum(1e7) | 1              | 12ms        | 1ms            | *Addon* is *12* times faster        |
+
+As we can see, **the function behind is the same**, it is the sum, but the fact that **all the addon sums are executed together**, in just one call, or if **they are executed one by call** makes the difference. **If they are executed in one call, the addon is 12 times faster than javascript**, **otherwise, it is 4 times slower**.
+
+### when to use the addon
+
+This explains well that **C++ addons should be used just for computational heavy tasks**, while they are **even slower if the task is simple**, due to a **small overhead, which is negligible if the algorithm is complex**. This means that **one can not just think of writing simple code in C++ and calling it by complex javascript code to make programs faster**, but **the C++ code has to execute a quite complex task in itself in order to have a benefit**. 
+
+One of these cases is **cryptography**, something that **requires big computations** but that is much used, for instance, in **Rest APIs**, to **check hashed passwords or json web tokens**. One of the **few npm packages written in C++** is indeed **[bcrypt](https://github.com/kelektiv/node.bcrypt.js#readme)**.
+
+### But is the C++ addon's code as faster as normal C code?
+
+Excluding the small **loading overhead** and the **Node.js C++ functions wrapping overhead**, the **C++ addon code is just normal C++ code**, so it has **the same speed as normal C code**.
+
+To check this, I wrote the **multisum** function in a normal **C** file and compiled it with **gcc**. 
+
+Note that the `get_current_timestamp` implementation is omitted.
+
+```c
+#include <stdio.h>
+#include <time.h>
+#include <sys/time.h>
+
+long long int get_current_timestamp();
+
+int multisum(int n)
+{
+    int result = 0;
+    for (int i = 0; i < n; i++)
+    {
+        result += i;
+    }
+    return result;
+}
+
+int main()
+{
+    long long int start = get_current_timestamp();
+
+    int result = 0;
+    result += multisum(1e7);
+    printf("result: %d\n", result);
+
+    long long int end = get_current_timestamp();
+    printf("Multisum 1e7 took %lld millis\n", end - start);
+
+    return 0;
+}
+```
+
+By running it we can obtain `Multisum 1e7 took 23 millis`.
+
+If we look at the **benchmark**, we can see that the **addon code took just 1ms**, while the **javascript code took 12ms**. **How is this possible that javascript is 2 times faster than normal C?**. It is because this **C file was not compiled with the optimization flag**.
+
+By running it with a `gcc -O3` flag, we can obatin `Multisum 1e7 took 1 millis`, which is **exactly the same performance of the addon**.
+
+The fact that **javascript was even faster than the not-optimized C code** should in any case make you think that **javascript is not so slow** and that the **V8 engine is highly optimized**, making Javascript, **of course not always**, quite **faster than other interpreted languages** such as python, PHP, Ruby and Perl.
