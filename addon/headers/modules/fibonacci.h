@@ -5,21 +5,16 @@
 
 using v8::FunctionCallbackInfo;
 using v8::Isolate;
+using v8::String;
 using v8::Integer;
 using v8::Value;
+using v8::Exception;
 
 /**
- * @brief The exported fibonacci35 function, it will calculate recursevely the 35th fibonacci number and return it.
+ * @brief The exported fibonacci function, it will calculate recursevely the nth fibonacci number and return it.
  * 
  * @param args The v8 args.
  */
-void Fibonacci35(const FunctionCallbackInfo<Value> &args);
-
-/**
- * @brief The exported fibonacci40 function, it will calculate recursevely the 40th fibonacci number and return it.
- * 
- * @param args The v8 args.
- */
-void Fibonacci40(const FunctionCallbackInfo<Value> &args);
+void Fibonacci(const FunctionCallbackInfo<Value> &args);
 
 #endif

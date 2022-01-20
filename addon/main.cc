@@ -9,8 +9,7 @@ using v8::Object;
 void Initialize(Local<Object> exports)
 {
     NODE_SET_METHOD(exports, "hello", Hello);
-    NODE_SET_METHOD(exports, "fibonacci35", Fibonacci35);
-    NODE_SET_METHOD(exports, "fibonacci40", Fibonacci40);
+    NODE_SET_METHOD(exports, "fibonacci", Fibonacci);
     NODE_SET_METHOD(exports, "sum", Sum);
     NODE_SET_METHOD(exports, "sum1e7", Sum1e7);
 }

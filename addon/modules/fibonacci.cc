@@ -1,27 +1,26 @@
 #include "../headers/modules/fibonacci.h"
 #include "../headers/utils/fibonacci.h"
 
-/* HELPERS DECLARATION */
-
-static void Fibonacci(int result, const FunctionCallbackInfo<Value> &args);
-
-/* EXPORTED IMPLEMENTATION */
-
-void Fibonacci35(const FunctionCallbackInfo<Value> &args)
-{
-    int result = fibonacci(35);
-    Fibonacci(result, args);
-}
-void Fibonacci40(const FunctionCallbackInfo<Value> &args)
-{
-    int result = fibonacci(40);
-    Fibonacci(result, args);
-}
-
-/* HELPERS IMPLEMENTATION */
-
-static void Fibonacci(int result, const FunctionCallbackInfo<Value> &args)
+void Fibonacci(const FunctionCallbackInfo<Value> &args)
 {
     Isolate *isolate = args.GetIsolate();
+
+    if (args.Length() < 1)
+    {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Wrong number of arguments").ToLocalChecked()));
+        return;
+    }
+
+    if (!args[0]->IsNumber())
+    {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Wrong arguments").ToLocalChecked()));
+        return;
+    }
+
+    int n = args[0]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+    int result = fibonacci(n);
+
     args.GetReturnValue().Set(Integer::New(isolate, result));
 }

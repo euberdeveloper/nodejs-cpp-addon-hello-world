@@ -35,8 +35,8 @@ benchmark('HELLO', js.hello, addon.hello, 1e6);
 benchmark('HELLO', js.hello, addon.hello, 1e6);
 benchmark('HELLO OVER FILE', () => writeStream.write(js.hello()), () => writeStream.write(addon.hello()), 1e6);
 
-benchmark('FIBONACCI 35', js.fibonacci(35), addon.fibonacci35, 5);
-benchmark('FIBONACCI 40', js.fibonacci(40), addon.fibonacci40, 5);
+benchmark('FIBONACCI(35)', () => js.fibonacci(35), () => addon.fibonacci(35), 5);
+benchmark('FIBONACCI(40)', () => js.fibonacci(40), () => addon.fibonacci(40), 5);
 
 benchmark('SUM', js.sum, addon.sum, 1e7);
 benchmark('MULTISUM 1e7', js.multisum(1e7), addon.sum1e7, 1);
